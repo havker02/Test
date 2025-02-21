@@ -5,7 +5,7 @@ const Navbar =()=>{
   return (
     <header className="bg-slate-700 flex justify-between items-center text-white px-2 h-14">
       <div>
-        <NavLink to="/">Experience</NavLink>
+        <NavLink to="/">Boozy Barrel</NavLink>
       </div>
       <nav>
         <ul className="flex gap-3">

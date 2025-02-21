@@ -1,9 +1,51 @@
+import { useState } from "react"
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
+
 const Login =()=>{
-  const login = import.meta.env.VITE_BACKEND_URL
+  
+  const navigate = useNavigate();
+  
+  const backend_url = import.meta.env.VITE_BACKEND_URL
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`${backend_url}/api/auth/login`, formData);
+
+      console.log(response)
+
+    if (response.status === 200){
+        localStorage.setItem("token", response.data.token)
+      alert("login success")
+      setFormData({
+        email: "",
+        password: "",
+      })
+      navigate("/contact")
+      }
+      
+    } catch (error) {
+      console.log(error.messags);
+    }
+  }
+  
   return(
     <div className="flex justify-center items-center mt-24">
       <div className="w-82 max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-  <form action={`${login}/api/auth/login`} method="post" className="space-y-6">
+  <form action={`${backend_url}/api/auth/login`} method="post" onSubmit={handleSubmit} className="space-y-6">
     <h5 className="text-xl font-medium text-center text-gray-900 dark:text-white">
       Sign in to your account
     </h5>
@@ -20,6 +62,8 @@ const Login =()=>{
         placeholder="name@email.com"
         required
         type="email"
+        value={formData.email}
+        onChange={handleChange}
       />
     </div>
     <div>
@@ -35,6 +79,8 @@ const Login =()=>{
         placeholder="••••••••"
         required
         type="password"
+        value={formData.password}
+        onChange={handleChange}
       />
     </div>
     <div className="flex items-start">
