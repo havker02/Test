@@ -30,16 +30,18 @@ const Login =()=>{
     if (response.status === 200){
         localStorage.setItem("token", response.data.token)
       alert("login success")
-      setFormData({
-        email: "",
-        password: "",
-      })
-      navigate("/contact")
+      navigate("/shop")
+      } else {
+      console.log(response)
       }
       
     } catch (error) {
-      console.log(error.messags);
+      console.log("Err: "+error);
     }
+    setFormData({
+      email: "",
+      password: "",
+    })
   }
   
   return(

@@ -32,23 +32,46 @@ router.post("/register", async (req, res)=>{
   })
 })
 
+// handler for user login
 router.post("/login", async (req, res)=>{
   const {email, password} = req.body;
   const user = await userModel.findOne({email})
 
   if (!user) {
-    return res.json({message: "Invalid credentials"})
+    return res.status(404).json({msg: "Invalid credentials"})
   }
 
   bcrypt.compare(password, user.password, (err, result)=>{
     if (err) {
-      return res.json(err.message)
+      return res.status(406).json(err.msg)
     }
     if(result){
       const token = jwt.sign({id: user._id, email: user.email}, process.env.JWT_SECRET)
       res.status(200).json({message: "Login success", token})
+    } else {
+      return res.status(501).json({msg: "Invalid credentials"})
     }
   })
 });
+
+// check user is already loggedin
+router.post("/verify", (req, res)=>{
+  const token = req.body.token;
+
+  if(!token){
+    return res.status(401).json({message: "Token not found, Please login"})
+  }
+  
+  jwt.verify(token, process.env.JWT_SECRET, (error, decode)=>{
+    if(error){
+      return res.status(400).json(error.message)
+    }
+    
+    if(decode){
+      return res.status(200).json({msg: "User LoggedIn"})
+    }
+    
+  })
+})
 
 module.exports = router;
